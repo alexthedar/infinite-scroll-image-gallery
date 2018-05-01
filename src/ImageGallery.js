@@ -40,7 +40,7 @@ class ImageGallery extends Component {
 
   componentWillMount(){
     let amount = getRecordAmount(window.innerWidth);
-    let photoArr = getNumberArray(1500348260, amount);
+    let photoArr = getNumberArray(1500348260, 24);
     this.setState({
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
@@ -91,41 +91,28 @@ class ImageGallery extends Component {
   //     currentDisplayEnd: newPhotoArr[newPhotoArr.length-1]
   //   })
   // }
+
+  updateArray = () => {
+    // create a large array of numbers
+    // if only and always 3 to a row then grab window height and divide by photoheight  = Math.floor(this.state.windowHeight/this.state.photoHeight)
+    //
+    
+  }
   
   handleScroll = (e) => {
-    // console.log(window.scrollY, 'body', document.body.offsetHeight, window.windowIndex)
-    // console.log(e, window, document)
-    // let absY = Math.abs(window.scrollY);
-    // let offset = absY > 1000 ? 500 : absY;
-    // let N = 2
-    // N += absY > 1000 ? Math.floor(window.innerHeight/1.2) : Math.floor(absY/250)
-    // console.log(absY, offset, N)
-    // var item  = this.refs.scrollThing
-    // var style = window.getComputedStyle(ReactDOM.findDOMNode(this.refs.scrollThing))
+    console.log() 
+    if(window.scrollY < 300 && this.state.bottom === true){
+    // if(window.scrollY < 300 && this.state.bottom === true){
+      this.setState({bottom: false, top: true})
 
-    // console.log(ReactDOM.findDOMNode(this.divElement).clientHeight )
-    // console.log(ReactDOM.findDOMNode(this.refs.scrollThing))
-    // console.log(window.getComputedStyle(ReactDOM.findDOMNode(this.refs.scrollThing)))
-    // console.log(parseFloat(style.marginTop))
-    // console.log(document.documentElement.scrollTop)
-    console.log((document.documentElement.scrollTop + window.innerHeight)/this.state.photoHeight)
-    // console.log(window.pageYOffset)
-    // var visibleStart = Math.floor(scroll / this.state.recordHeight);
-    // var visibleEnd = Math.min(visibleStart + this.state.recordsPerBody, this.state.total - 1);
-
-    // var displayStart = Math.max(0, Math.floor(scroll / this.state.recordHeight) - this.state.recordsPerBody * 1.5);
-    // var displayEnd = Math.min(displayStart + 4 * this.state.recordsPerBody, this.state.total - 1);
-    if(window.scrollY < 300 && document.body.offsetHeight > 4000){
       console.log('here')
     }
-    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 250) ) {
+    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - (this.state.photoHeight*2)) ) {
       let endingNumber = this.state.photosArr[this.state.photosArr.length-1];
-      this.setState({loading: true})
-      this.addToPhotos(endingNumber, this.state.amount)
-      // if(this.state.photosArr.length > 200){
-      //   this.updateArray(endingNumber)
-      // } else {
-      // }
+      this.setState({bottom: true, top: false})
+      console.log('now')
+
+      // this.addToPhotos(endingNumber, this.state.amount)
     }
   }
 
@@ -136,9 +123,6 @@ class ImageGallery extends Component {
   }
 
   render() {
-    // console.log(this.state)
-    // console.log(range(this.state.currentVisibleStart, this.state.currentVisibleEnd, 20))
-    // console.log(this.state.currentDisplayEnd)
     let photos = this.state.photosArr.map((number, i) => {
       return <Photo url={number} getPhotoHeight={this.getPhotoHeight} key={number+`${i}`}/>
     })
@@ -169,28 +153,7 @@ export default ImageGallery;
 
 class Photo extends Component {
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if(this.props.height !== nextProps.height){
-  //     this.props.getPhotoHeight(Math.ceil(ReactDOM.findDOMNode(this.divElement).clientHeight))
-  //     console.log('props')
-  //   }
-  // }
-
-  componentDidMount() {
-    // this.props.getPhotoHeight(Math.ceil(ReactDOM.findDOMNode(this.divElement).clientHeight))
-    // this.props.getRef(this.divElement, this.props.i);
-    // console.log('mount')
-  }
-
-  // componentWillReceiveProps(nextProps){
-  //   if(this.props.height !== nextProps.height){
-  //     console.log(nextProps)
-  //     console.log('props')
-  //   }
-  // }
-
   render(){
-    // console.log(this.props)
     return(
       <Measure
         bounds
@@ -198,7 +161,7 @@ class Photo extends Component {
           this.props.getPhotoHeight(contentRect.bounds.height)
         }}>
         {({ measureRef }) =>
-              <Col xs={12} sm={6} md={4} lg={4} > 
+              <Col xs={4} sm={4} md={4} lg={4} > 
                 <div ref={measureRef}>
                   <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
                 </div>
@@ -212,3 +175,12 @@ class Photo extends Component {
       // <Col xs={12} sm={6} md={4} lg={4} ref={ (divElement) => this.divElement = divElement}> 
       //   <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
       // </Col>     
+
+
+      // var recordsPerBody = Math.floor((window.innerHeight - 2) / this.state.photoHeight);
+      // var visibleStart = Math.floor(document.documentElement.scrollTop / this.state.photoHeight);
+      // var visibleEnd = Math.min(visibleStart + recordsPerBody, this.state.photosArr.length - 1);
+  
+      // var displayStart = Math.max(0, Math.floor(document.documentElement.scrollTop / this.state.photoHeight) - recordsPerBody * 1.5);
+      // var displayEnd = Math.min(displayStart + 4 * recordsPerBody, this.state.photosArr.length - 1);
+  
