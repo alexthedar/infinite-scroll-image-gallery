@@ -4,6 +4,7 @@ import { Grid, Row, Col, Image } from 'react-bootstrap';
 import './ImageGallery.css'
 
 import uniq from 'lodash/uniq';
+import range from 'lodash/range';
 
 const getNumberArray = (starting, amount) => {
   let arr = [starting]
@@ -98,7 +99,16 @@ class ImageGallery extends Component {
     // let N = 2
     // N += absY > 1000 ? Math.floor(window.innerHeight/1.2) : Math.floor(absY/250)
     // console.log(absY, offset, N)
-    console.log(this.refs.scrollThing.findDOMNode())
+    // var item  = this.refs.scrollThing
+    // var style = window.getComputedStyle(ReactDOM.findDOMNode(this.refs.scrollThing))
+
+    // console.log(ReactDOM.findDOMNode(this.divElement).clientHeight )
+    // console.log(ReactDOM.findDOMNode(this.refs.scrollThing))
+    // console.log(window.getComputedStyle(ReactDOM.findDOMNode(this.refs.scrollThing)))
+    // console.log(parseFloat(style.marginTop))
+    // console.log(document.documentElement.scrollTop)
+    // console.log((document.documentElement.scrollTop + window.innerHeight)/219)
+    // console.log(window.pageYOffset)
     // var visibleStart = Math.floor(scroll / this.state.recordHeight);
     // var visibleEnd = Math.min(visibleStart + this.state.recordsPerBody, this.state.total - 1);
 
@@ -119,6 +129,7 @@ class ImageGallery extends Component {
   }
 
   render() {
+    // console.log(range(this.state.currentVisibleStart, this.state.currentVisibleEnd, 20))
     // console.log(this.state.currentDisplayEnd)
     let photos = this.state.photosArr.map((number, i) => {
       return <Photo url={number} key={number+`${i}`}/>
@@ -127,7 +138,7 @@ class ImageGallery extends Component {
     return (
       <React.Fragment >
         <Grid>
-          <Row ref="scrollThing">
+          <Row>
             {photos}
           </Row>
         </Grid>
@@ -139,10 +150,27 @@ class ImageGallery extends Component {
 export default ImageGallery;
 
 
-const Photo = (props) => {
-  return (
-    <Col xs={12} sm={6} md={4} lg={4} > 
-      <Image src={`https://hiring.verkada.com/thumbs/${props.url}.jpg`} responsive className='photo-box'/>
-    </Col>     
-  )
+// const Photo = (props) => {
+//   return (
+//     <Col xs={12} sm={6} md={4} lg={4} > 
+//       <Image src={`https://hiring.verkada.com/thumbs/${props.url}.jpg`} responsive className='photo-box'/>
+//     </Col>     
+//   )
+// }
+
+
+class Photo extends Component {
+
+  componentDidUpdate() {
+    console.log(Math.ceil(ReactDOM.findDOMNode(this.divElement).clientHeight) )
+  }
+
+  render(){
+
+    return(
+      <Col xs={12} sm={6} md={4} lg={4} ref={ (divElement) => this.divElement = divElement}> 
+        <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
+      </Col>     
+    )
+  }
 }
