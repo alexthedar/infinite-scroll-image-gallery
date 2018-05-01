@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import Measure from 'react-measure'
 import { Grid, Row, Col, Image } from 'react-bootstrap';
 import './ImageGallery.css'
 
@@ -107,7 +108,7 @@ class ImageGallery extends Component {
     // console.log(window.getComputedStyle(ReactDOM.findDOMNode(this.refs.scrollThing)))
     // console.log(parseFloat(style.marginTop))
     // console.log(document.documentElement.scrollTop)
-    // console.log((document.documentElement.scrollTop + window.innerHeight)/219)
+    console.log((document.documentElement.scrollTop + window.innerHeight)/this.state.photoHeight)
     // console.log(window.pageYOffset)
     // var visibleStart = Math.floor(scroll / this.state.recordHeight);
     // var visibleEnd = Math.min(visibleStart + this.state.recordsPerBody, this.state.total - 1);
@@ -128,11 +129,18 @@ class ImageGallery extends Component {
     }
   }
 
+  getPhotoHeight = (height) => {
+    this.setState({
+      photoHeight: height    
+    })
+  }
+
   render() {
+    // console.log(this.state)
     // console.log(range(this.state.currentVisibleStart, this.state.currentVisibleEnd, 20))
     // console.log(this.state.currentDisplayEnd)
     let photos = this.state.photosArr.map((number, i) => {
-      return <Photo url={number} key={number+`${i}`}/>
+      return <Photo url={number} getPhotoHeight={this.getPhotoHeight} key={number+`${i}`}/>
     })
 
     return (
@@ -161,16 +169,46 @@ export default ImageGallery;
 
 class Photo extends Component {
 
-  componentDidUpdate() {
-    console.log(Math.ceil(ReactDOM.findDOMNode(this.divElement).clientHeight) )
+  // componentDidUpdate(prevProps, prevState) {
+  //   if(this.props.height !== nextProps.height){
+  //     this.props.getPhotoHeight(Math.ceil(ReactDOM.findDOMNode(this.divElement).clientHeight))
+  //     console.log('props')
+  //   }
+  // }
+
+  componentDidMount() {
+    // this.props.getPhotoHeight(Math.ceil(ReactDOM.findDOMNode(this.divElement).clientHeight))
+    // this.props.getRef(this.divElement, this.props.i);
+    // console.log('mount')
   }
 
-  render(){
+  // componentWillReceiveProps(nextProps){
+  //   if(this.props.height !== nextProps.height){
+  //     console.log(nextProps)
+  //     console.log('props')
+  //   }
+  // }
 
+  render(){
+    // console.log(this.props)
     return(
-      <Col xs={12} sm={6} md={4} lg={4} ref={ (divElement) => this.divElement = divElement}> 
-        <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
-      </Col>     
+      <Measure
+        bounds
+        onResize={(contentRect) => {
+          this.props.getPhotoHeight(contentRect.bounds.height)
+        }}>
+        {({ measureRef }) =>
+              <Col xs={12} sm={6} md={4} lg={4} > 
+                <div ref={measureRef}>
+                  <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
+                </div>
+              </Col>     
+        }
+      </Measure>
     )
   }
 }
+
+      // <Col xs={12} sm={6} md={4} lg={4} ref={ (divElement) => this.divElement = divElement}> 
+      //   <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
+      // </Col>     
