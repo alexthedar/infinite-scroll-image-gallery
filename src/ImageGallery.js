@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { Grid, Row, Col, Image } from 'react-bootstrap';
 import './ImageGallery.css'
+
+import uniq from 'lodash/uniq';
 
 const getNumberArray = (starting, amount) => {
   let arr = [starting]
@@ -29,24 +30,6 @@ class ImageGallery extends Component {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
     window.addEventListener('scroll', this.handleScroll, false);
-    // let num = getNumberArray(1500348260, this.state.amount)
-    // this.setState({
-    //   photosArr: num
-    // })
-    // console.log(this.state)
-    //   Options
-    var options = {
-      root: null, // Page as root
-      rootMargin: '0px',
-      threshold: 1.0
-    };
-    // Create an observer
-    this.observer = new IntersectionObserver(
-      this.handleObserver.bind(this), //callback
-      options
-    );
-    //Observ the `loadingRef`
-    this.observer.observe(this.loadingRef);
   }
 
   componentWillUnmount() {
@@ -73,28 +56,13 @@ class ImageGallery extends Component {
     let newNumbers = getNumberArray(endOfArr, amount)
     console.log(newNumbers, newNumbers[newNumbers.length-1])
     this.setState({
-      photosArr: this.state.photosArr.concat(newNumbers),
+      photosArr: uniq(this.state.photosArr.concat(newNumbers)),
       endingNumber: newNumbers[newNumbers.length-1]
     })
   }
-
-  handleObserver(entities, observer) {
-    const y = entities[0].boundingClientRect.y;
-    if (this.state.prevY > y) {
-      let endingNumber = this.state.photosArr[this.state.photosArr.length-1];
-      this.updateNumbers(endingNumber, this.state.amount)
-      // const curPage = lastUser.id;
-      // this.getUsers(curPage);
-      // this.setState({ page: curPage });
-      console.log('here')
-    }
-    this.setState({ prevY: y });
-  }
   
   handleScroll = (e) => {
-    // console.log('scroll event');
-    // console.log(window);
-    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 750) ) {
+    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500) ) {
       let endingNumber = this.state.photosArr[this.state.photosArr.length-1];
       this.updateNumbers(endingNumber, this.state.amount)
       // console.log('here')
@@ -103,14 +71,7 @@ class ImageGallery extends Component {
   }
 
   render() {
-    // let amount = 18
-    // if(this.state.windowWidth < 400) { amount = 16 }
-    // else if (this.state.windowWidth >= 400 && this.state.windowWidth < 768) { amount = 8 }
-    // else if (this.state.windowWidth >= 768 && this.state.windowWidth < 992) { amount = 18 }
-    // else if (this.state.windowWidth >= 992 && this.state.windowWidth < 1200) { amount = 24 }
-    // else if (this.state.windowWidth >= 1200 ) { amount = 21 }
-    // let arr = getNumberArray(1500348260, amount)
-    console.log(this.state)
+    console.log(this.state.photosArr)
     let photos = this.state.photosArr.map((number, i) => {
       return <Photo url={number} key={number+`${i}`}/>
     })
@@ -119,8 +80,6 @@ class ImageGallery extends Component {
       <React.Fragment >
         <Grid>
           <Row >
-            <div ref={loadingRef => (this.loadingRef = loadingRef)}>
-            </div>
             {photos}
           </Row>
         </Grid>
