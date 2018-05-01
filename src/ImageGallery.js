@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { Grid, Row, Col, Image } from 'react-bootstrap';
 import './ImageGallery.css'
 
@@ -74,7 +75,8 @@ class ImageGallery extends Component {
     let newNumbers = getNumberArray(endOfArr, amount)
     this.setState({
       photosArr: uniq(this.state.photosArr.concat(newNumbers)),
-      currentDisplayEnd: newNumbers[newNumbers.length-1]
+      currentDisplayEnd: newNumbers[newNumbers.length-1],
+      loading: false
     })
   }
 
@@ -89,8 +91,25 @@ class ImageGallery extends Component {
   // }
   
   handleScroll = (e) => {
-    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500) ) {
+    // console.log(window.scrollY, 'body', document.body.offsetHeight, window.windowIndex)
+    // console.log(e, window, document)
+    // let absY = Math.abs(window.scrollY);
+    // let offset = absY > 1000 ? 500 : absY;
+    // let N = 2
+    // N += absY > 1000 ? Math.floor(window.innerHeight/1.2) : Math.floor(absY/250)
+    // console.log(absY, offset, N)
+    console.log(this.refs.scrollThing.findDOMNode())
+    // var visibleStart = Math.floor(scroll / this.state.recordHeight);
+    // var visibleEnd = Math.min(visibleStart + this.state.recordsPerBody, this.state.total - 1);
+
+    // var displayStart = Math.max(0, Math.floor(scroll / this.state.recordHeight) - this.state.recordsPerBody * 1.5);
+    // var displayEnd = Math.min(displayStart + 4 * this.state.recordsPerBody, this.state.total - 1);
+    if(window.scrollY < 300 && document.body.offsetHeight > 4000){
+      console.log('here')
+    }
+    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 250) ) {
       let endingNumber = this.state.photosArr[this.state.photosArr.length-1];
+      this.setState({loading: true})
       this.addToPhotos(endingNumber, this.state.amount)
       // if(this.state.photosArr.length > 200){
       //   this.updateArray(endingNumber)
@@ -100,7 +119,7 @@ class ImageGallery extends Component {
   }
 
   render() {
-    console.log(this.state.currentDisplayEnd)
+    // console.log(this.state.currentDisplayEnd)
     let photos = this.state.photosArr.map((number, i) => {
       return <Photo url={number} key={number+`${i}`}/>
     })
@@ -108,7 +127,7 @@ class ImageGallery extends Component {
     return (
       <React.Fragment >
         <Grid>
-          <Row >
+          <Row ref="scrollThing">
             {photos}
           </Row>
         </Grid>
@@ -124,7 +143,6 @@ const Photo = (props) => {
   return (
     <Col xs={12} sm={6} md={4} lg={4} > 
       <Image src={`https://hiring.verkada.com/thumbs/${props.url}.jpg`} responsive className='photo-box'/>
-      {props.url}
     </Col>     
   )
 }
