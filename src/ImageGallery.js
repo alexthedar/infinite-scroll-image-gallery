@@ -12,6 +12,16 @@ const getNumberArray = (starting, amount) => {
   return arr
 }
 
+const getRecordAmount = (windowWidth) => {
+  let amount = 0;
+  if(window.innerWidth < 400) { amount = 16 }
+  else if (window.innerWidth >= 400 && window.innerWidth < 768) { amount = 8 }
+  else if (window.innerWidth >= 768 && window.innerWidth < 992) { amount = 18 }
+  else if (window.innerWidth >= 992 && window.innerWidth < 1200) { amount = 24 }
+  else if (window.innerWidth >= 1200 ) { amount = 21 };
+  return amount;
+}
+
 class ImageGallery extends Component {
 
   state={
@@ -22,8 +32,22 @@ class ImageGallery extends Component {
     windowWidth: 0,
     windowHeight: 0,
     loading: false,
-    prevY: 0,
-    photosArr: getNumberArray(1500348260, 21)
+    photosArr: [1500348260]
+  }
+
+  componentWillMount(){
+    let amount = getRecordAmount(window.innerWidth);
+    let photoArr = getNumberArray(1500348260, amount);
+    this.setState({
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight,
+      amount: amount,
+      photosArr: photoArr,
+      currentVisibleStart: 1500348260,
+      currentVisibleEnd: photoArr[photoArr.length-1],
+      currentDisplayStart: 1500348260,
+      currentDisplayEnd: photoArr[photoArr.length-1],
+    })
   }
 
   componentDidMount() {
@@ -38,13 +62,7 @@ class ImageGallery extends Component {
   }
 
   updateWindowDimensions = (e) =>  {
-    let amount = 0;
-    if(window.innerWidth < 400) { amount = 16 }
-    else if (window.innerWidth >= 400 && window.innerWidth < 768) { amount = 8 }
-    else if (window.innerWidth >= 768 && window.innerWidth < 992) { amount = 18 }
-    else if (window.innerWidth >= 992 && window.innerWidth < 1200) { amount = 24 }
-    else if (window.innerWidth >= 1200 ) { amount = 21 }
-    
+    let amount = getRecordAmount(window.innerWidth);
     this.setState({ 
       windowWidth: window.innerWidth, 
       windowHeight: window.innerHeight,
@@ -52,26 +70,37 @@ class ImageGallery extends Component {
     });
   }
 
-  updateNumbers = (endOfArr, amount) => {
+  addToPhotos = (endOfArr, amount) => {
     let newNumbers = getNumberArray(endOfArr, amount)
-    console.log(newNumbers, newNumbers[newNumbers.length-1])
     this.setState({
       photosArr: uniq(this.state.photosArr.concat(newNumbers)),
-      endingNumber: newNumbers[newNumbers.length-1]
+      currentDisplayEnd: newNumbers[newNumbers.length-1]
     })
   }
+
+  // trouble getting array to update array on screen after certain point so as not to endless add to dom
+  // updateArray = (currentEndingNumber) => {
+  //   var halfAmount = this.state.amount/2;
+  //   let newPhotoArr = getNumberArray(currentEndingNumber, this.state.photosArr.length)
+  //   this.setState({
+  //     photoArr: newPhotoArr,
+  //     currentDisplayEnd: newPhotoArr[newPhotoArr.length-1]
+  //   })
+  // }
   
   handleScroll = (e) => {
     if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500) ) {
       let endingNumber = this.state.photosArr[this.state.photosArr.length-1];
-      this.updateNumbers(endingNumber, this.state.amount)
-      // console.log('here')
+      this.addToPhotos(endingNumber, this.state.amount)
+      // if(this.state.photosArr.length > 200){
+      //   this.updateArray(endingNumber)
+      // } else {
+      // }
     }
-
   }
 
   render() {
-    console.log(this.state.photosArr)
+    console.log(this.state.currentDisplayEnd)
     let photos = this.state.photosArr.map((number, i) => {
       return <Photo url={number} key={number+`${i}`}/>
     })
