@@ -43,18 +43,25 @@ class ImageGallery extends Component {
     let amount = getRecordAmount(window.innerWidth);
     let photosArr = getNumberArray(1500348260, 50);
     let rowsPerPage = Math.floor((window.innerHeight - 2) / 220); //default size
+    let displayEndRow = rowsPerPage * 2; //default size
     this.setState({
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       amount: amount,
       photosArr: photosArr,
-      currentVisibleStart: 1500348260,
-      currentVisibleEnd: rowsPerPage,
-      currentDisplayStart: 1500348260,
-      currentDisplayEnd: rowsPerPage * 2,
+      photoArrEnd: photosArr[photosArr.length-1],
+
       rowsPerPage: rowsPerPage,
+      columnsPerPage: 3,
       photosPerPage: rowsPerPage * 3,
-      photoArrEnd: photosArr[photosArr.length-1]
+      visibleStartRow: 0,
+      visibleEndRow: rowsPerPage * 2,
+      displayStartRow: 0,
+      displayEndRow: rowsPerPage * 2,
+      firstVisiblePhoto: 1500348260,
+      lastVisiblePhoto: 1500348240 + ((rowsPerPage * 3) * 20),
+      firstDisplayPhoto: 1500348260,
+      lastDisplayPhoto: 1500348240 + ((displayEndRow * 3) *20)
     })
   }
 
@@ -71,7 +78,8 @@ class ImageGallery extends Component {
 
   updateWindowDimensions = (e) =>  {
     let amount = getRecordAmount(window.innerWidth);
-    let calcs = this.getPhotoCalc();
+    // let calcs = this.getPhotoCalc();
+    let calcs = {}
     calcs.windowWidth = window.innerWidth;
     calcs.windowHeight = window.innerHeight;
     calcs.amount = amount;
@@ -120,20 +128,8 @@ class ImageGallery extends Component {
       firstDisplayPhoto: firstDisplayPhoto,
       lastDisplayPhoto: lastDisplayPhoto
     }
-    // this.setState({
-    //   rowsPerPage: rowsPerPage,
-    //   columnsPerPage: columnsPerPage,
-    //   photosPerPage: photosPerPage,
-    //   visibleStartRow: visibleStartRow,
-    //   visibleEndRow: visibleEndRow,
-    //   displayStartRow: displayStartRow,
-    //   displayEndRow: displayEndRow,
-    //   firstVisiblePhoto: firstVisiblePhoto,
-    //   lastVisiblePhoto: lastVisiblePhoto,
-    //   firstDisplayPhoto: firstDisplayPhoto,
-    //   lastDisplayPhoto: lastDisplayPhoto
-    // })
   }
+
   getPhotoDimensions = (height, width) => {
     this.setState({
       photoHeight: height,
@@ -144,9 +140,17 @@ class ImageGallery extends Component {
 
 
   render() {
-    let photos = this.state.photosArr.map((number, i) => {
-      return <Photo url={number} key={number+`${i}`} getPhotoDimensions={this.getPhotoDimensions}/>
-    })
+
+    console.log(this.state)
+    var photos = []
+    for(let i = this.state.firstVisiblePhoto; i< this.state.lastDisplayPhoto; i=i+20){
+      photos.push(<Photo url={i} key={i} getPhotoDimensions={this.getPhotoDimensions}/>)
+    }
+
+    // let photos = this.state.photosArr.map((number, i) => {
+    //   return <Photo url={number} key={number+`${i}`} getPhotoDimensions={this.getPhotoDimensions}/>
+    // })
+    console.log(photos)
 
     return (
       <React.Fragment >
