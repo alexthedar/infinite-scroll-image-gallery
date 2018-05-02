@@ -28,14 +28,9 @@ const getRecordAmount = (windowWidth) => {
 class ImageGallery extends Component {
 
   state={
-    currentVisibleStart: 1500348260,
-    currentVisibleEnd: 1500348260,
-    currentDisplayStart: 1500348260,
-    currentDisplayEnd: 1500348260,
     windowWidth: 0,
     windowHeight: 0,
     loading: false,
-    photosArr: [1500348260],
     totalPhotos: (1503031520-1500348260)/5 // start hundreds - end hundreds / photos per hundred
   }
 
@@ -48,20 +43,19 @@ class ImageGallery extends Component {
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       amount: amount,
-      photosArr: photosArr,
-      photoArrEnd: photosArr[photosArr.length-1],
 
       rowsPerPage: rowsPerPage,
       columnsPerPage: 3,
       photosPerPage: rowsPerPage * 3,
-      visibleStartRow: 0,
+      visibleStartRow: 1,
       visibleEndRow: rowsPerPage * 2,
-      displayStartRow: 0,
+      displayStartRow: 1,
       displayEndRow: rowsPerPage * 2,
       firstVisiblePhoto: 1500348260,
       lastVisiblePhoto: 1500348240 + ((rowsPerPage * 3) * 20),
       firstDisplayPhoto: 1500348260,
-      lastDisplayPhoto: 1500348240 + ((displayEndRow * 3) *20)
+      lastDisplayPhoto: 1500348240 + ((displayEndRow * 3) *20),
+      photoHeight: 500
     })
   }
 
@@ -85,13 +79,6 @@ class ImageGallery extends Component {
     calcs.amount = amount;
     this.setState(calcs);
   }
-
-  // addToPhotosArr = (endOfArr, amount) => {
-  //   let newNumbers = getNumberArray(endOfArr, amount)
-  //   this.setState({
-  //     photosArr: uniq(this.state.photosArr.concat(newNumbers)),
-  //   })
-  // }
   
   handleScroll = (e) => {
     let data = this.getPhotoCalc();
@@ -99,7 +86,7 @@ class ImageGallery extends Component {
   }
 
   getPhotoCalc = () => {  
-    let rowsPerPage = Math.ceil((window.innerWidth - 2) / this.state.photoHeight);
+    let rowsPerPage = Math.floor((window.innerWidth - 2) / this.state.photoHeight);
     let columnsPerPage = Math.floor(window.innerWidth / this.state.photoWidth);
 
     let scrollTop = document.documentElement.scrollTop || window.pageYOffset;
@@ -141,23 +128,31 @@ class ImageGallery extends Component {
 
   render() {
 
-    console.log(this.state)
-    var photos = []
-    for(let i = this.state.firstVisiblePhoto; i< this.state.lastDisplayPhoto; i=i+20){
-      photos.push(<Photo url={i} key={i} getPhotoDimensions={this.getPhotoDimensions}/>)
-    }
+    // console.log(this.state)
+    // var photos = []
+    // for(let i = this.state.firstVisiblePhoto; i< this.state.lastDisplayPhoto; i=i+20){
+    //   photos.push(<Photo url={i} key={i} getPhotoDimensions={this.getPhotoDimensions}/>)
+    // }
 
     // let photos = this.state.photosArr.map((number, i) => {
     //   return <Photo url={number} key={number+`${i}`} getPhotoDimensions={this.getPhotoDimensions}/>
     // })
-    console.log(photos)
+    // console.log(photos)
 
     return (
       <React.Fragment >
         <Grid>
-          <Row>
-            {photos}
-          </Row>
+          <PhotoRows  getPhotoDimensions={this.getPhotoDimensions} 
+                      firstVisiblePhoto={this.state.firstVisiblePhoto}
+                      lastVisiblePhoto={this.state.lastVisiblePhoto}
+                      firstDisplayPhoto={this.state.firstDisplayPhoto}
+                      lastDisplayPhoto={this.state.lastDisplayPhoto}
+                      photoHeight={this.state.photoHeight}
+                      visibleStartRow={this.state.visibleStartRow}
+                      visibleEndRow={this.state.visibleEndRow}
+                      displayStartRow={this.state.displayStartRow}
+                      displayEndRow={this.state.displayEndRow}
+                      total={this.state.totalPhotos}/>
         </Grid>
       </React.Fragment>
     );
@@ -167,8 +162,73 @@ class ImageGallery extends Component {
 export default ImageGallery;
 
 
+class PhotoRows extends Component {
+
+  state={
+    shouldUpdate: true,
+    total: 0,
+    displayStart: 0,
+    displayEnd: 0
+  }
+
+  componentWillReceiveProps(nextProps){
+    var shouldUpdate = !(
+        nextProps.visibleStartRow >= this.state.displayStartRow &&
+        nextProps.visibleEndRow <= this.state.displayEndRow
+    ) || (nextProps.total !== this.state.total);
+
+    if (shouldUpdate) {
+        this.setState({
+            shouldUpdate: shouldUpdate,
+            total: nextProps.total,
+            displayStartRow: nextProps.displayStartRow,
+            displayEndRow: nextProps.displayEndRow,
+            photoVisibleStart: nextProps.firstVisiblePhoto,
+            photoVisibleEnd: nextProps.lastVisiblePhoto,
+            photoDisplayStart: nextProps.firstDisplayPhoto,
+            photoDisplayEnd: nextProps.lastDisplayPhoto
+
+        });
+    } else {
+        this.setState({shouldUpdate: false});
+    }
+  }
+
+  shouldComponentUpdate(){
+    return this.state.shouldUpdate
+  }
+
+
+  render(){
+    console.log(this.props)
+    var photos = []
+    for(let i = this.props.firstVisiblePhoto; i< this.props.lastDisplayPhoto; i=i+20){
+      // photos.push(<Photo url={i} key={i} getPhotoDimensions={this.props.getPhotoDimensions}/>)
+      console.log(i)
+      photos = photos.concat([<Photo url={i} key={i} getPhotoDimensions={this.props.getPhotoDimensions}/>])
+    }
+
+
+    return(
+      <React.Fragment>
+        <Row style={{height: this.props.displayStartRow * this.props.photoHeight}}></Row>
+        <Row>
+          {photos}
+        </Row>
+        <Row style={{height: (this.props.displayEndRow *5) * this.props.photoHeight}}></Row>
+      </React.Fragment>
+
+    )
+  }
+}
+
+
 
 class Photo extends Component {
+
+  componentWillMount(){
+
+  }
 
   render (){
     return(
@@ -179,7 +239,7 @@ class Photo extends Component {
         }}>
         {({ measureRef }) =>
             <Col xs={12} sm={6} md={4} lg={4} > 
-              <div ref={measureRef}>
+              <div ref={measureRef} >
                 <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'/>
                 <span style={{color: 'white'}}>{this.props.url}</span>
               </div>
