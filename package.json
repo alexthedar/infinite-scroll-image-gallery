@@ -8,11 +8,7 @@
     "react": "^16.3.2",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.3.2",
-<<<<<<< HEAD
-    "react-measure": "^2.0.0",
-=======
     "react-measure": "^2.0.2",
->>>>>>> 695d9a8917b079832a516f37234aed9532f0170a
     "react-scripts": "1.1.4",
     "reactstrap": "^5.0.0"
   },
