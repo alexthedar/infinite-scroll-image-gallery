@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-<<<<<<< HEAD
-import Measure from 'react-measure'
-=======
 import Measure from 'react-measure';
->>>>>>> 695d9a8917b079832a516f37234aed9532f0170a
 import { Grid, Row, Col, Image } from 'react-bootstrap';
 import './ImageGallery.css'
 
@@ -45,12 +41,8 @@ class ImageGallery extends Component {
 
   componentWillMount(){
     let amount = getRecordAmount(window.innerWidth);
-<<<<<<< HEAD
-    let photoArr = getNumberArray(1500348260, 24);
-=======
     let photosArr = getNumberArray(1500348260, 50);
     let rowsPerPage = Math.floor((window.innerHeight - 2) / 220); //default size
->>>>>>> 695d9a8917b079832a516f37234aed9532f0170a
     this.setState({
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
@@ -92,40 +84,6 @@ class ImageGallery extends Component {
       photosArr: uniq(this.state.photosArr.concat(newNumbers)),
     })
   }
-<<<<<<< HEAD
-
-  // trouble getting array to update array on screen after certain point so as not to endless add to dom
-  // updateArray = (currentEndingNumber) => {
-  //   var halfAmount = this.state.amount/2;
-  //   let newPhotoArr = getNumberArray(currentEndingNumber, this.state.photosArr.length)
-  //   this.setState({
-  //     photoArr: newPhotoArr,
-  //     currentDisplayEnd: newPhotoArr[newPhotoArr.length-1]
-  //   })
-  // }
-
-  updateArray = () => {
-    // create a large array of numbers
-    // if only and always 3 to a row then grab window height and divide by photoheight  = Math.floor(this.state.windowHeight/this.state.photoHeight)
-    //
-    
-  }
-  
-  handleScroll = (e) => {
-    console.log() 
-    if(window.scrollY < 300 && this.state.bottom === true){
-    // if(window.scrollY < 300 && this.state.bottom === true){
-      this.setState({bottom: false, top: true})
-
-      console.log('here')
-    }
-    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - (this.state.photoHeight*2)) ) {
-      let endingNumber = this.state.photosArr[this.state.photosArr.length-1];
-      this.setState({bottom: true, top: false})
-      console.log('now')
-
-      // this.addToPhotos(endingNumber, this.state.amount)
-=======
   
   handleScroll = (e) => {
     let scrollTop = document.documentElement.scrollTop || window.pageYOffset;
@@ -140,7 +98,6 @@ class ImageGallery extends Component {
       let newNumbers = getNumberArray(this.state.photosArr[this.state.photosArr.length-1], this.state.photosPerPage * 4)
       photosArr = uniq(this.state.photosArr.concat(newNumbers)),
       // this.addToPhotosArr(this.state.photosArr[this.state.photosArr.length-1], this.state.photosPerPage * 4)
->>>>>>> 695d9a8917b079832a516f37234aed9532f0170a
     }
     this.setState({
       rowsPerPage: rowsPerPage,
@@ -168,14 +125,9 @@ class ImageGallery extends Component {
   }
 
   render() {
-<<<<<<< HEAD
-    let photos = this.state.photosArr.map((number, i) => {
-      return <Photo url={number} getPhotoHeight={this.getPhotoHeight} key={number+`${i}`}/>
-=======
     // 
     let photos = this.state.photosArr.map((number, i) => {
       return <Photo url={number} key={number+`${i}`} getPhotoHeight={this.getPhotoHeight}/>
->>>>>>> 695d9a8917b079832a516f37234aed9532f0170a
     })
 
     return (
@@ -193,25 +145,10 @@ class ImageGallery extends Component {
 export default ImageGallery;
 
 
-<<<<<<< HEAD
-// const Photo = (props) => {
-//   return (
-//     <Col xs={12} sm={6} md={4} lg={4} > 
-//       <Image src={`https://hiring.verkada.com/thumbs/${props.url}.jpg`} responsive className='photo-box'/>
-//     </Col>     
-//   )
-// }
-
-
-class Photo extends Component {
-
-  render(){
-=======
 
 class Photo extends Component {
 
   render (){
->>>>>>> 695d9a8917b079832a516f37234aed9532f0170a
     return(
       <Measure
         bounds
@@ -219,31 +156,6 @@ class Photo extends Component {
           this.props.getPhotoHeight(contentRect.bounds.height)
         }}>
         {({ measureRef }) =>
-<<<<<<< HEAD
-              <Col xs={4} sm={4} md={4} lg={4} > 
-                <div ref={measureRef}>
-                  <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
-                </div>
-              </Col>     
-        }
-      </Measure>
-    )
-  }
-}
-
-      // <Col xs={12} sm={6} md={4} lg={4} ref={ (divElement) => this.divElement = divElement}> 
-      //   <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'  />
-      // </Col>     
-
-
-      // var recordsPerBody = Math.floor((window.innerHeight - 2) / this.state.photoHeight);
-      // var visibleStart = Math.floor(document.documentElement.scrollTop / this.state.photoHeight);
-      // var visibleEnd = Math.min(visibleStart + recordsPerBody, this.state.photosArr.length - 1);
-  
-      // var displayStart = Math.max(0, Math.floor(document.documentElement.scrollTop / this.state.photoHeight) - recordsPerBody * 1.5);
-      // var displayEnd = Math.min(displayStart + 4 * recordsPerBody, this.state.photosArr.length - 1);
-  
-=======
             <Col xs={4} sm={4} md={4} lg={4} > 
               <div ref={measureRef}>
                 <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} responsive className='photo-box'/>
@@ -264,4 +176,3 @@ class Photo extends Component {
 // }
 
 
->>>>>>> 695d9a8917b079832a516f37234aed9532f0170a
