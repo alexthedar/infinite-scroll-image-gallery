@@ -34,21 +34,26 @@ class ImageGallery extends Component {
     windowWidth: 0,
     windowHeight: 0,
     loading: false,
-    photosArr: [1500348260]
+    photosArr: [1500348260],
+    totalPhotos: (1503031520-1500348260)/5 // start hundreds - end hundreds / photos per hundred
   }
 
   componentWillMount(){
     let amount = getRecordAmount(window.innerWidth);
-    let photoArr = getNumberArray(1500348260, 100);
+    let photosArr = getNumberArray(1500348260, 50);
+    let rowsPerPage = Math.floor((window.innerHeight - 2) / 220); //default size
     this.setState({
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       amount: amount,
-      photosArr: photoArr,
+      photosArr: photosArr,
       currentVisibleStart: 1500348260,
-      currentVisibleEnd: photoArr[photoArr.length-1],
+      currentVisibleEnd: rowsPerPage,
       currentDisplayStart: 1500348260,
-      currentDisplayEnd: photoArr[photoArr.length-1],
+      currentDisplayEnd: rowsPerPage * 2,
+      rowsPerPage: rowsPerPage,
+      photosPerPage: rowsPerPage * 3,
+      photoArrEnd: photosArr[photosArr.length-1]
     })
   }
 
@@ -72,56 +77,38 @@ class ImageGallery extends Component {
     });
   }
 
-  addToPhotos = (endOfArr, amount) => {
+  addToPhotosArr = (endOfArr, amount) => {
     let newNumbers = getNumberArray(endOfArr, amount)
     this.setState({
       photosArr: uniq(this.state.photosArr.concat(newNumbers)),
-      currentDisplayEnd: newNumbers[newNumbers.length-1],
-      loading: false
     })
   }
-
-  // trouble getting array to update array on screen after certain point so as not to endless add to dom
-  // updateArray = (currentEndingNumber) => {
-  //   var halfAmount = this.state.amount/2;
-  //   let newPhotoArr = getNumberArray(currentEndingNumber, this.state.photosArr.length)
-  //   this.setState({
-  //     photoArr: newPhotoArr,
-  //     currentDisplayEnd: newPhotoArr[newPhotoArr.length-1]
-  //   })
-  // }
   
   handleScroll = (e) => {
-    // console.log(window.scrollY, 'body', document.body.offsetHeight, window.windowIndex)
-    // console.log(e, window, document)
-    // let absY = Math.abs(window.scrollY);
-    // let offset = absY > 1000 ? 500 : absY;
-    // let N = 2
-    // N += absY > 1000 ? Math.floor(window.innerHeight/1.2) : Math.floor(absY/250)
-    // console.log(absY, offset, N)
-    // console.log(this.refs.scrollThing.findDOMNode())
-    console.log(this.state)
-    var scrollTop = document.documentElement.scrollTop || window.pageYOffset;
-    var recordPerBody = Math.floor((window.innerHeight - 2) / this.state.photoHeight);
-    var visibleStart = Math.floor(scrollTop / this.state.photoHeight);
-    var visibleEnd = Math.min(visibleStart + recordPerBody, 500000 - 1);
-
-    var displayStart = Math.max(0, Math.floor(scrollTop / this.state.photoHeight) - recordPerBody * 1.5);
-    var displayEnd = Math.min(displayStart + 4 * recordPerBody, 500000 - 1);
-
-    console.log(recordPerBody, visibleStart, visibleEnd, displayStart, displayEnd) //window.pageYOffset || 
-    if(window.scrollY < 300 && document.body.offsetHeight > 4000){
-      console.log('here')
+    let scrollTop = document.documentElement.scrollTop || window.pageYOffset;
+    let rowsPerPage = Math.floor((this.state.windowHeight - 2) / this.state.photoHeight);
+    let photosPerPage = rowsPerPage * 3 // rowsPerPage * amount;
+    let visibleStart = Math.floor(scrollTop / this.state.photoHeight);
+    let visibleEnd = Math.min(visibleStart + rowsPerPage, 500000 - 1);
+    let displayStart = Math.max(0, Math.floor(scrollTop / this.state.photoHeight) - rowsPerPage * 1.5);
+    let displayEnd = Math.min(displayStart + 4 * rowsPerPage, 500000 - 1);
+    var photosArr = this.state.photosArr;
+    if(Math.floor(this.state.photosArr.length * .4) < this.state.currentDisplayEnd){
+      let newNumbers = getNumberArray(this.state.photosArr[this.state.photosArr.length-1], this.state.photosPerPage * 4)
+      photosArr = uniq(this.state.photosArr.concat(newNumbers)),
+      // this.addToPhotosArr(this.state.photosArr[this.state.photosArr.length-1], this.state.photosPerPage * 4)
     }
-    if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 250) ) {
-      let endingNumber = this.state.photosArr[this.state.photosArr.length-1];
-      this.setState({loading: true})
-      // this.addToPhotos(endingNumber, this.state.amount)
-      // if(this.state.photosArr.length > 200){
-      //   this.updateArray(endingNumber)
-      // } else {
-      // }
-    }
+    this.setState({
+      rowsPerPage: rowsPerPage,
+      photosPerPage: photosPerPage,
+      currentVisibleStart: visibleStart,
+      currentVisibleEnd: visibleEnd,
+      currentDisplayStart: displayStart,
+      currentDisplayEnd: displayEnd,
+      photosArr: photosArr
+    })
+    // console.log(rowsPerPage, visibleStart, visibleEnd, displayStart, displayEnd) //window.pageYOffset || 
+
   }
 
   getPhotoHeight = (height) => {
@@ -131,7 +118,7 @@ class ImageGallery extends Component {
   }
 
   render() {
-    // console.log(this.state)
+    // 
     let photos = this.state.photosArr.map((number, i) => {
       return <Photo url={number} key={number+`${i}`} getPhotoHeight={this.getPhotoHeight}/>
     })
