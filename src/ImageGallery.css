@@ -3,6 +3,9 @@
   margin-top: 1rem;
   border: 1px solid slategray;
   color: white;
+  min-height: 200px;
+  height: 100%;
+  width: 100%
 }
 
 .rowOverflow {
