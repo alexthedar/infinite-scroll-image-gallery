@@ -101,20 +101,19 @@ class ImageGallery extends Component {
     let firstVisiblePhoto = 1500348260 + (topVisibleRow * 60)
     let lastVisiblePhoto = (firstVisiblePhoto -20) + (bottomVisibleRow * 60)
     let topDisplayRow = (topVisibleRow - 3) < 0 ? 0 : (topVisibleRow - 3);
-    let bottomDisplayRow = topDisplayRow + (this.state.rowsPerPage * 4)
+    let bottomDisplayRow = topDisplayRow + (this.state.rowsPerPage * 2)
     let topDisplayPhoto = topDisplayRow < 0 ? firstVisiblePhoto : 1500348260 + (topDisplayRow * 60);
     let bottomDisplayPhoto = (firstVisiblePhoto -20) + (bottomDisplayRow * 60)
 
     let totalScrollHeight =9252;
     let elapsedScrollHeight = this.state.photoHeight * topVisibleRow;
-    let remainingScrollHeight = totalScrollHeight - elapsedScrollHeight
+    let remainingScrollHeight = totalScrollHeight - (elapsedScrollHeight + (this.state.rowsPerPage*this.state.photoHeight));
 
     console.log(topDisplayRow, bottomDisplayRow)
     console.log(topDisplayPhoto, bottomDisplayPhoto)
     this.setState({
       // photosNumbers: remadeArr,
       scroll: scroll,
-      row: topVisibleRow,
       elapsedScrollHeight: elapsedScrollHeight,
       remainingScrollHeight: remainingScrollHeight,
       topDisplayRow: topDisplayRow,
@@ -152,7 +151,9 @@ class ImageGallery extends Component {
                       topDisplayRow={this.state.topDisplayRow}
                       topVisibleRow={this.state.topVisibleRow}
                       topDisplayPhoto={this.state.topDisplayPhoto}
-                      bottomDisplayPhoto={this.state.bottomDisplayPhoto}/>
+                      bottomDisplayPhoto={this.state.bottomDisplayPhoto}
+                      total={this.state.total}
+                      photoHeight={this.state.photoHeight}/>
         </Grid>
       </React.Fragment>
     );
@@ -180,7 +181,7 @@ class PhotoRows extends Component {
         shouldUpdate: shouldUpdate,
         topDisplayRow: nextProps.topDisplayRow,
         topVisibleRow: nextProps.topVisibleRow, 
-        photos: getPhotoNumbersArr(nextProps.topDisplayPhoto, nextProps.bottomDisplayPhoto) 
+        photos: getPhotoNumbersArr(nextProps.topDisplayPhoto, nextProps.bottomDisplayPhoto),
       })
     }
   }
@@ -201,13 +202,11 @@ class PhotoRows extends Component {
 
     return(
       <React.Fragment>
-        {/* <Row ><div style={{height: this.props.elapsedScrollHeight}}></div></Row> */}
-        <script style={{height: this.props.elapsedScrollHeight}}></script>
           <Row>
+            <div style={{height: this.props.elapsedScrollHeight}}></div>
             {photos}
+            <div style={{height: this.props.remainingScrollHeight}}></div>
           </Row>
-          <script style={{height: this.props.remainingScrollHeight}}></script>
-        {/* <Row ><div style={{height: this.props.remainingScrollHeight}}></div></Row> */}
       </React.Fragment>
     )
   }
