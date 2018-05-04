@@ -15,14 +15,35 @@ const getNumberArray = (starting, amount) => {
   return arr
 }
 
-const getRecordAmount = (windowWidth) => {
+// const getRecordAmount = (windowWidth) => {
+//   let amount = 0;
+//   if(window.innerWidth < 400) { amount = 16 }
+//   else if (window.innerWidth >= 400 && window.innerWidth < 768) { amount = 8 }
+//   else if (window.innerWidth >= 768 && window.innerWidth < 992) { amount = 18 }
+//   else if (window.innerWidth >= 992 && window.innerWidth < 1200) { amount = 24 }
+//   else if (window.innerWidth >= 1200 ) { amount = 21 };
+//   return amount;
+// }
+const getAmount = (windowWidth) => {
   let amount = 0;
-  if(window.innerWidth < 400) { amount = 16 }
-  else if (window.innerWidth >= 400 && window.innerWidth < 768) { amount = 8 }
-  else if (window.innerWidth >= 768 && window.innerWidth < 992) { amount = 18 }
-  else if (window.innerWidth >= 992 && window.innerWidth < 1200) { amount = 24 }
-  else if (window.innerWidth >= 1200 ) { amount = 21 };
-  return amount;
+  if(window.innerWidth < 400) { amount = {col: 1, row: 5} }
+  else if (window.innerWidth >= 400 && window.innerWidth < 768) { amount = {col: 1, row: 2} }
+  else if (window.innerWidth >= 768 && window.innerWidth < 992) { amount = {col: 1, row: 4} }
+  else if (window.innerWidth >= 992 && window.innerWidth < 1200) { amount = {col: 1, row:3 } }
+  else if (window.innerWidth >= 1200 ) { amount = {col: 1, row: 4} };
+  return amount
+}
+
+const getColumns = (winWidth, photoWidth) => {
+  return Math.min(3, Math.floor(winWidth/photoWidth))
+}
+
+const getRows = (winHeight, photoHeight) => {
+  return Math.max(1, Math.floor(winHeight/photoHeight))
+}
+
+const getScrollRow = (scrollTop, photoHeight) => {
+  return Math.floor(scrollTop/photoHeight)
 }
 
 const getPhotoNumbersArr = (start, end) => {
@@ -40,20 +61,10 @@ class ImageGallery extends Component {
     windowHeight: window.innerHeight,
     loading: false,
     totalPhotos: (1503031520-1500348260)/5, // start hundreds - end hundreds / photos per hundred
-    rowsPerPage: 3,
-    columnsPerPage: 3,
     photosPerPage: 15,
-    // visibleStartRow: 0,
-    // visibleEndRow: 3,
-    // displayStartRow: 0,
-    // displayEndRow: 6,
-    // firstVisiblePhoto: 1500348260,
-    // lastVisiblePhoto: 15003483420,
-    // firstDisplayPhoto: 1500348260,
-    // lastDisplayPhoto: 1500348520,
-    photoHeight: (window.innerHeight/4)-20,
+    photoHeight: (window.innerHeight/getAmount(window.innerWidth).row),
     elapsedScrollHeight: 0,
-    remainingScrollHeight: (1503031520-150034826)/((window.innerHeight/4)-20) - (((window.innerHeight/4)-20)*4),
+    remainingScrollHeight: (1503031520-150034826)/(window.innerHeight/getAmount(window.innerWidth).row),
     photosNumbers: getNumberArray(1500348260, 15)  || 0,
     row: 0
 }
@@ -70,28 +81,34 @@ class ImageGallery extends Component {
   }
 
   updateWindowDimensions = (e) =>  {
-    // let amount = getRecordAmount(window.innerWidth);
-    // let calcs = this.getPhotoCalc();
-    let calcs = {}
-    calcs.windowWidth = document.documentElement.clientWidth;
-    calcs.windowHeight = document.documentElement.clientHeight;
-    // calcs.amount = amount;
-    this.setState(calcs);
+    let w = window.innerWidth;
+    let h = window.innerHeight
+    this.setState({
+      rowsPerPage: getRows(h, this.state.photoHeight),
+      columnsPerPage: getColumns(w, this.state.photoWidth),
+      windowWidth: w,
+      windowHeight: h,
+    });
   }
   
   handleScroll = (e) => {
+    this.setState({ loading: true })
+    let photo = Math.ceil(this.state.photoHeight)
+    let scroll = document.documentElement.scrollTop || window.pageYOffset;
+    console.log(document.documentElement.scrollTop, window.pageYOffset, photo)
+    console.log(Math.floor(document.documentElement.scrollTop/photo), Math.floor(window.pageYOffset/photo))
+
     // let arr = this.getPhotoArr();
     let newArr = this.state.photosNumbers.concat([])
-    let scroll = document.documentElement.scrollTop || window.pageYOffset;
-    let adjust = scroll < this.state.scroll ? -60 : 60;
-    let rowAdjust = scroll < this.state.scroll ? -1 : 1;
-    let row = this.state.row + rowAdjust;
+    // let adjust = scroll < this.state.scroll ? -60 : 60;
+    // let rowAdjust = scroll < this.state.scroll ? -1 : 1;
+    let row = this.state.row + 0;
     if (row < 0){row = 0}
-    let first = newArr[0]+adjust;
+    let first = newArr[0]+0;
     if(first < 1500348260){first = 1500348260}
-    let last = newArr[14]+adjust;
+    let last = newArr[14]+0;
     if(last < 1500348500) {last = 1500348500}
-    let remadeArr = getPhotoNumbersArr(first, last)
+    let remadeArr = getPhotoNumbersArr(1500348260, 1500349500)
     let totalScrollHeight =((1503031520-1500348260))/this.state.photoHeight;
     let elapsedScrollHeight = this.state.photoHeight * row;
     let remainingScrollHeight = totalScrollHeight - (elapsedScrollHeight + (this.state.photoHeight * 4))
@@ -102,18 +119,15 @@ class ImageGallery extends Component {
       elapsedScrollHeight: elapsedScrollHeight,
       remainingScrollHeight: remainingScrollHeight
     })
-    console.log(Math.floor(scroll/this.state.photoHeight))
+    // console.log(Math.floor(scroll/this.state.photoHeight))
   }
 
-  // getPhotoArr = () => {
-  // }
-
-  // getPhotoDimensions = (height, width) => {
-  //   this.setState({
-  //     photoHeight: height,
-  //     photoWidth: width
-  //   })
-  // }
+  getPhotoDimensions = (height, width) => {
+    this.setState({
+      photoHeight: height,
+      photoWidth: width
+    })
+  }
 
 
   render() {
@@ -130,6 +144,8 @@ class ImageGallery extends Component {
         <Grid>
           <PhotoRows  photosNumbers={this.state.photosNumbers} 
                       elapsedScrollHeight={this.state.elapsedScrollHeight}
+                                          getPhotoDimensions={this.getPhotoDimensions}
+
                       remainingScrollHeight={this.state.remainingScrollHeight}/>
         </Grid>
       </React.Fragment>
@@ -184,10 +200,10 @@ class PhotoRows extends Component {
 
 
   render(){
-    console.log(this.props)
+    // console.log(this.props)
     let photos = this.props.photosNumbers.map((number, i) => {
       return <Photo url={number} key={number+`${i}`} 
-                    // getPhotoDimensions={this.props.getPhotoDimensions}
+                    getPhotoDimensions={this.props.getPhotoDimensions}
                     photoHeight={this.props.photoHeight}/>
     })
 
@@ -206,54 +222,55 @@ class PhotoRows extends Component {
 
 
 
-// class Photo extends Component {
+class Photo extends Component {
 
-//   render (){
+  render (){
 
-//     var style = {
-//       height: `${this.props.photoHeight}px`, 
-//       marginTop: '1rem', 
-//       marginBottom: '1rem',
-//       position: 'relative',
-//       textAlign: 'center'
+    var style = {
+      height: `${this.props.photoHeight}px`, 
+      marginTop: '1rem', 
+      marginBottom: '1rem',
+      position: 'relative',
+      textAlign: 'center'
     
-//     }
-//     return(
-//       <Measure
-//         bounds
-//         onResize={(contentRect) => {
-//           this.props.getPhotoDimensions(contentRect.bounds.height, contentRect.bounds.width)
-//         }}>
-//         {({ measureRef }) =>
-//             <Col xs={12} sm={6} md={4} lg={4} > 
-//               <div ref={measureRef} style={style} >
-//                 <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} className='photo-box' />
-//                 <div className='centered'>{this.props.url}</div>
-//               </div>
-//             </Col>     
-//         }
-//       </Measure>    )
-//   }
-// }
-
-
-const Photo = (props) => {
-  var style = {
-    height: `${props.photoHeight}px`, 
-    marginTop: '1rem', 
-    marginBottom: '1rem',
-    position: 'relative',
-    textAlign: 'center'
+    }
+    return(
+      <Measure
+        bounds
+        margin
+        onResize={(contentRect) => {
+          this.props.getPhotoDimensions(contentRect.bounds.height+contentRect.margin.top+contentRect.margin.bottom, contentRect.bounds.width)
+        }}>
+        {({ measureRef }) =>
+            <Col xs={12} sm={6} md={4} lg={4} > 
+              <div ref={measureRef} style={style} >
+                <Image src={`https://hiring.verkada.com/thumbs/${this.props.url}.jpg`} className='photo-box' />
+                <div className='centered'>{this.props.url}</div>
+              </div>
+            </Col>     
+        }
+      </Measure>    )
   }
-  return (
-    <Col xs={12} sm={6} md={4} lg={4} > 
-      <div style={style} >
-        <Image src={`https://hiring.verkada.com/thumbs/${props.url}.jpg`} className='photo-box' />
-        <div className='centered'>{props.url}</div>
-      </div>
-    </Col>     
-)
 }
+
+
+// const Photo = (props) => {
+//   var style = {
+//     height: `${props.photoHeight}px`, 
+//     marginTop: '1rem', 
+//     marginBottom: '1rem',
+//     position: 'relative',
+//     textAlign: 'center'
+//   }
+//   return (
+//     <Col xs={12} sm={6} md={4} lg={4} > 
+//       <div style={style} >
+//         <Image src={`https://hiring.verkada.com/thumbs/${props.url}.jpg`} className='photo-box' />
+//         <div className='centered'>{props.url}</div>
+//       </div>
+//     </Col>     
+//   )
+// }
 
 
 // getPhotoCalc = () => {  
