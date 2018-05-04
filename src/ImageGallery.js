@@ -60,7 +60,7 @@ class ImageGallery extends Component {
     windowWidth: window.innerWidth,
     windowHeight: window.innerHeight,
     loading: false,
-    totalPhotos: 2683260, // start hundreds - end hundreds / photos per hundred
+    totalPhotos: 2683260, 
     photosPerPage: 15,
     photoHeight: 290,
     elapsedScrollHeight: 50,
@@ -112,7 +112,6 @@ class ImageGallery extends Component {
     console.log(topDisplayRow, bottomDisplayRow)
     console.log(topDisplayPhoto, bottomDisplayPhoto)
     this.setState({
-      // photosNumbers: remadeArr,
       scroll: scroll,
       elapsedScrollHeight: elapsedScrollHeight,
       remainingScrollHeight: remainingScrollHeight,
@@ -121,7 +120,6 @@ class ImageGallery extends Component {
       topDisplayPhoto: topDisplayPhoto,
       bottomDisplayPhoto: bottomDisplayPhoto
     })
-    // console.log(Math.floor(scroll/this.state.photoHeight))
   }
 
   getPhotoDimensions = (height, width) => {
@@ -133,14 +131,6 @@ class ImageGallery extends Component {
 
 
   render() {
-
-    // let photos = this.state.photosNumbers.map((number, i) => {
-    //   return <Photo url={number} key={number+`${i}`} 
-    //                 getPhotoDimensions={this.getPhotoDimensions}
-    //                 photoHeight={this.props.photoHeight}/>
-    // })
-
-
     return (
       <React.Fragment >  
         <Grid>
@@ -192,7 +182,6 @@ class PhotoRows extends Component {
 
 
   render(){
-    // console.log(this.props)
     let photos = this.state.photos.map((number, i) => {
       return <Photo url={number} key={number+`${i}`} 
                     getPhotoDimensions={this.props.getPhotoDimensions}
@@ -217,7 +206,6 @@ class PhotoRows extends Component {
 class Photo extends Component {
 
   render (){
-
     var style = {
       height: `${this.props.photoHeight}px`, 
       marginTop: '1rem', 
@@ -245,80 +233,3 @@ class Photo extends Component {
   }
 }
 
-
-// const Photo = (props) => {
-//   var style = {
-//     height: `${props.photoHeight}px`, 
-//     marginTop: '1rem', 
-//     marginBottom: '1rem',
-//     position: 'relative',
-//     textAlign: 'center'
-//   }
-//   return (
-//     <Col xs={12} sm={6} md={4} lg={4} > 
-//       <div style={style} >
-//         <Image src={`https://hiring.verkada.com/thumbs/${props.url}.jpg`} className='photo-box' />
-//         <div className='centered'>{props.url}</div>
-//       </div>
-//     </Col>     
-//   )
-// }
-
-
-// getPhotoCalc = () => {  
-//   // let rowsPerPage = Math.ceil((this.state.windowHeight - 2) / this.state.photoHeight);
-//   // let columnsPerPage = Math.floor(this.state.windowWidth / this.state.photoWidth);
-//   let rowsPerPage = 4;
-//   let columnsPerPage = 3;
-
-//   // let scrollTop = document.documentElement.scrollTop || window.pageYOffset;
-//   let scrollTop = window.pageYOffset;
-//   // let photosPerPage = (rowsPerPage + 1) * columnsPerPage;
-//   let photosPerPage = 12;
-//   // let displayPhotosPerPage = (rowsPerPage * columnsPerPage) * 2;
-//   let displayPhotosPerPage = 24;
-//   // let firstPhoto =  (1500348260 + (Math.floor(scrollTop / (this.state.photoHeight + 20)) * columnsPerPage) * 20)
-//   let firstPhoto =  (1500348260 + (Math.floor(scrollTop / (this.state.photoHeight + 20)) * columnsPerPage) * 20)
-//   let lastPhoto = (firstPhoto - 20) + (photosPerPage * 20)
-
-//   let visibleStartRow = Math.floor(scrollTop / this.state.photoHeight);
-//   let visibleEndRow = Math.min(visibleStartRow + rowsPerPage, 500000 - 1);
-//   // let displayStartRow = Math.max(0, Math.floor((scrollTop / this.state.photoHeight) - rowsPerPage * 1.5));
-//   // let displayEndRow = Math.min(displayStartRow + (3 * rowsPerPage), 500000 - 1);
-//   let displayStartRow = Math.max(0, visibleStartRow - 4);
-//   let displayEndRow = (rowsPerPage + visibleStartRow) + 4;
-  
-//   let firstVisiblePhoto = 1500348260 + ((visibleStartRow * columnsPerPage)*20);
-//   let lastVisiblePhoto = (firstVisiblePhoto - 20) + (photosPerPage * 20);
-//   let firstDisplayPhoto = 1500348260 + ((visibleStartRow * columnsPerPage) * 20);
-//   let lastDisplayPhoto = Math.max(3, firstDisplayPhoto + (displayEndRow * 20))
-//   // let lastDisplayPhoto = (firstVisiblePhoto - 20) + ((displayEndRow *3)*20);
-
-//   console.log(scrollTop, this.state.photoHeight, Math.floor(scrollTop / this.state.photoHeight))
-//   console.log(rowsPerPage, columnsPerPage, photosPerPage, displayPhotosPerPage)
-//   console.log(firstPhoto, lastPhoto)
-//   // console.log((displayStartRow * columnsPerPage) * 20)
-//   // console.log((Math.max(0, Math.floor((scrollTop / this.state.photoHeight) - rowsPerPage * 2))))
-//   // console.log(rowsPerPage, columnsPerPage, scrollTop, photosPerPage, visibleStartRow, visibleEndRow, displayStartRow, displayEndRow, firstVisiblePhoto, lastVisiblePhoto, firstDisplayPhoto, lastDisplayPhoto)
-//   // console.log(Math.floor((scrollTop / this.state.photoHeight) - rowsPerPage * 1.5))
-//   let photosNumbers = getPhotoNumbersArr(firstPhoto, lastPhoto)
-//   // let photosNumbers = getNumberArray(firstDisplayPhoto, 16)
-//   this.setState({
-//     // amount: getNumberArray(firstDisplayPhoto, 21),
-//     rowsPerPage: rowsPerPage,
-//     columnsPerPage: columnsPerPage,
-//     photosPerPage: photosPerPage,
-//     visibleStartRow: visibleStartRow,
-//     visibleEndRow: visibleEndRow,
-//     displayStartRow: displayStartRow,
-//     displayEndRow: displayEndRow,
-//     firstVisiblePhoto: firstVisiblePhoto,
-//     lastVisiblePhoto: lastVisiblePhoto,
-//     firstDisplayPhoto: firstDisplayPhoto,
-//     lastDisplayPhoto: lastDisplayPhoto,
-//     photosNumbers: photosNumbers
-//   })
-  
-//   console.log(photosNumbers)
-//   console.log(this.state)
-// }
