@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import Measure from 'react-measure';
 import { Grid, Row, Col, Image } from 'react-bootstrap';
 import './ImageGallery.css'
 
-import uniq from 'lodash/uniq';
-import range from 'lodash/range';
+// import uniq from 'lodash/uniq';
+// import range from 'lodash/range';
 
 const getNumberArray = (starting, amount) => {
   let arr = [starting]
@@ -46,45 +46,45 @@ const getScrollRow = (scrollTop, photoHeight) => {
   return Math.floor(scrollTop/Math.ceil(photoHeight))
 }
 
-const getPhotoNumbersArr = (start, end) => {
-  let arr = []
-  for(let i = start; i <= end; i=i+20){
-    arr.push(i)
-  }
-  return arr
-}
+// const getPhotoNumbersArr = (start, end) => {
+//   let arr = []
+//   for(let i = start; i <= end; i=i+20){
+//     arr.push(i)
+//   }
+//   return arr
+// }
 
 class ImageGallery extends Component {
 
   state={
     windowWidth: window.innerWidth,
     windowHeight: window.innerHeight,
-    loading: false,
+    // loading: false,
     totalPhotos: 2683260, 
     photoHeight: 290,
-    photoWidth: window.innerHeight / getAmount(window.innerWidth).col ,
-    elapsedScrollHeight: 0,
-    remainingScrollHeight: 2683260,
+    photoWidth: 220 ,
+    // elapsedScrollHeight: 0,
+    // remainingScrollHeight: 2683260,
     rowsPerPage: getAmount(window.innerWidth).row,
     columnsPerPage: getAmount(window.innerWidth).col,
-    photosNumbers: getNumberArray(1500348260, 30)  || 0,
+    // photosNumbers: getNumberArray(1500348260, 30)  || 0,
   }
 
   componentDidMount() {
     this.updateWindowDimensions();
-    window.addEventListener('resize', this.updateWindowDimensions);
+    window.addEventListener('resize', this.updateWindowDimensions, false);
     window.addEventListener('scroll', this.handleScroll, false);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWindowDimensions);
+    window.removeEventListener('resize', this.updateWindowDimensions, false);
     window.removeEventListener('scroll', this.handleScroll, false);
   }
 
   updateWindowDimensions = (e) =>  {
     let w = window.innerWidth;
     let h = window.innerHeight
-    console.log(w, this.state.photoWidth)
+    // console.log(w, this.state.photoWidth)
     this.setState({
       rowsPerPage: getRows(h, this.state.photoHeight),
       columnsPerPage: getColumns(w, this.state.photoWidth),
@@ -94,21 +94,21 @@ class ImageGallery extends Component {
   }
   
   handleScroll = (e) => {
-    let photo = Math.ceil(this.state.photoHeight);
+    // let photo = Math.ceil(this.state.photoHeight);
     let scroll = document.documentElement.scrollTop || window.pageYOffset;
     let topVisibleRow = getScrollRow(scroll, this.state.photoHeight);
-    let bottomVisibleRow = topVisibleRow + this.state.rowsPerPage;
+    // let bottomVisibleRow = topVisibleRow + this.state.rowsPerPage;
     let columnAdjust = 20 * this.state.columnsPerPage
     let firstVisiblePhoto = 1500348260 + (topVisibleRow * columnAdjust)
-    let lastVisiblePhoto = (firstVisiblePhoto -20) + (bottomVisibleRow * columnAdjust)
-    let topDisplayRow = (topVisibleRow - 10) < 0 ? 0 : (topVisibleRow - 3);
-    let bottomDisplayRow = topDisplayRow + (this.state.rowsPerPage * 3)
+    // let lastVisiblePhoto = (firstVisiblePhoto -20) + (bottomVisibleRow * columnAdjust)
+    let topDisplayRow = (topVisibleRow - 10) < 0 ? 0 : (topVisibleRow - 10);
+    // let bottomDisplayRow = topDisplayRow + (this.state.rowsPerPage * 3)
     let topDisplayPhoto = topDisplayRow < 0 ? firstVisiblePhoto : 1500348260 + (topDisplayRow * columnAdjust);
-    let bottomDisplayPhoto = (firstVisiblePhoto -20) + (bottomDisplayRow * columnAdjust)
+    // let bottomDisplayPhoto = (firstVisiblePhoto -20) + (bottomDisplayRow * columnAdjust)
 
-    let totalScrollHeight = (2683260 / this.state.columnsPerPage) ;
-    let elapsedScrollHeight = topVisibleRow;
-    let remainingScrollHeight = totalScrollHeight - elapsedScrollHeight ;
+    // let totalScrollHeight = (2683260 / this.state.columnsPerPage) ;
+    // let elapsedScrollHeight = topVisibleRow;
+    // let remainingScrollHeight = totalScrollHeight - elapsedScrollHeight ;
 
     // console.log(topDisplayRow, bottomDisplayRow)
     // console.log(topDisplayPhoto, bottomDisplayPhoto)
@@ -116,13 +116,13 @@ class ImageGallery extends Component {
     this.setState({
       amount: (this.state.rowsPerPage * 20) * this.state.columnsPerPage,
       scroll: scroll,
-      elapsedScrollHeight: elapsedScrollHeight,
-      remainingScrollHeight: remainingScrollHeight,
+      // elapsedScrollHeight: elapsedScrollHeight,
+      // remainingScrollHeight: remainingScrollHeight,
       topDisplayRow: topDisplayRow,
       topVisibleRow: topVisibleRow,
       topDisplayPhoto: topDisplayPhoto,
-      bottomDisplayPhoto: bottomDisplayPhoto,
-      loading: false
+      // bottomDisplayPhoto: bottomDisplayPhoto,
+      // loading: false
     })
   }
 
@@ -139,16 +139,14 @@ class ImageGallery extends Component {
     return (
       <React.Fragment >  
         <Grid>
-          <PhotoRows  elapsedScrollHeight={this.state.elapsedScrollHeight}
-                      getPhotoDimensions={this.getPhotoDimensions}
-                      remainingScrollHeight={this.state.remainingScrollHeight}
+          <PhotoRows  getPhotoDimensions={this.getPhotoDimensions}
                       topDisplayRow={this.state.topDisplayRow}
                       topVisibleRow={this.state.topVisibleRow}
                       topDisplayPhoto={this.state.topDisplayPhoto}
-                      bottomDisplayPhoto={this.state.bottomDisplayPhoto}
-                      total={this.state.total}
-                      photoHeight={this.state.photoHeight}
-                      rows={this.state.rowsPerPage}
+                      // bottomDisplayPhoto={this.state.bottomDisplayPhoto}
+                      totalPhotos={this.state.totalPhotos}
+                      // photoHeight={this.state.photoHeight}
+                      // rows={this.state.rowsPerPage}
                       amount={this.state.amount}/>
         </Grid>
       </React.Fragment>
@@ -166,21 +164,19 @@ class PhotoRows extends Component {
     total: 0,
     topDisplayRow: 0,
     topVisibleRow: 0,
-    photos: getNumberArray(1500348260, 50)
+    photos: getNumberArray(1500348260, 40)
   }
 
   componentWillReceiveProps(nextProps){
     let shouldUpdate = false;
     if(this.state.topDisplayRow <= nextProps.topDisplayRow || this.state.topVisibleRow >= nextProps.topVisibleRow){
-      let photos = getNumberArray(nextProps.topDisplayPhoto, nextProps.amount)
       shouldUpdate = true
       this.setState({
         shouldUpdate: shouldUpdate,
         topDisplayRow: nextProps.topDisplayRow,
         topVisibleRow: nextProps.topVisibleRow, 
-        photos: photos,
+        photos: getNumberArray(nextProps.topDisplayPhoto, nextProps.amount),
       })
-      // nextProps.setLoading(false)
     }
   }
 
@@ -191,17 +187,16 @@ class PhotoRows extends Component {
 
   render(){
     let photos = this.state.photos.map((number, i) => {
-      return <Photo url={number} key={number+`${i}`} 
-                    getPhotoDimensions={this.props.getPhotoDimensions}
-                    photoHeight={this.props.photoHeight}/>
+      return <Photo url={number} key={number} 
+                    getPhotoDimensions={this.props.getPhotoDimensions}/>
     })
 
     return(
       <React.Fragment>
           <Row>
-            <div style={{height: this.props.elapsedScrollHeight}}></div>
+            <div style={{height: this.state.topVisibleRow}}></div>
             {photos}
-            <div style={{height: this.props.remainingScrollHeight}}></div>
+            <div style={{height: this.props.totalPhotos - this.state.topVisibleRow}}></div>
           </Row>
       </React.Fragment>
     )
