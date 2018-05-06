@@ -41,6 +41,7 @@ const getVisibleRows = (totalRows, firstVisibleRowNumber, totalColumns) => {
   for(let i = 0; i < totalRows; i++){
     rowsArr.push(getNumberArray(1500348260 + ((firstVisibleRowNumber + i) * 20), totalColumns))
   }
+  console.log(totalColumns)
   return rowsArr
 }
 
@@ -50,12 +51,13 @@ class ImageGallery extends Component {
   state={
     windowWidth: window.innerWidth,
     windowHeight: window.innerHeight,
-    totalRows: getAmount(window.innerWidth).row,
+    totalRows: 3,
     totalPhotos: 2683260, 
     photoHeight: 290,
     photoWidth: 220 ,
-    rowsPerPage: getAmount(window.innerWidth).row,
-    columnsPerPage: getAmount(window.innerWidth).col,
+    rowsPerPage: 3,
+    columnsPerPage: 3,
+    // columnsPerPage: getAmount(window.innerWidth).col,
     topDisplayRow: 0,
     topVisibleRow: 0
   }
@@ -135,7 +137,15 @@ class PhotoRows extends Component {
 
   state={
     firstVisiblePhoto: 1500348260 + (this.props.topVisibleRow * 20),
-    urlArr: getVisibleRows(this.props.totalRows, this.props.topVisibleRow, this.props.totalColumns)
+    urlArr: getVisibleRows((this.props.totalRows * 2), this.props.topVisibleRow, this.props.totalColumns)
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(this.props.topVisibleRow !== nextProps.topVisibleRow || this.props.bottomVisibleRow !== nextProps.bottomVisibleRow){
+      this.setState({
+        urlArr: getVisibleRows((this.props.totalRows * 2), this.props.topVisibleRow, this.props.totalColumns)
+      })
+    }
   }
 
 
