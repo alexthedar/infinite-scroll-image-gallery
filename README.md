@@ -10,3 +10,4 @@ Instructions to clone, install and view project:
 2. cd infinite-scroll-image-gallery
 3. yarn install or npm install
 4. yarn start or npm run start
+
